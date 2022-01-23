@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 
 public class Compilateur {
 
@@ -10,13 +11,22 @@ public class Compilateur {
     static char carlu;
     static int nombre;
     static String chaine;
-    static int num_ligne;
+    static int num_ligne = 0;
     static String[] table_mots_reserves = new String[NB_MOTS_RESERVES];
 
-    public static void main(String args[]){
+    AnalyseurLexical analyseurLexical = new AnalyseurLexical();
+
+    public Compilateur(String path){
+        source = new File(path);
+    }
+
+
+    public static void main(String args[]) throws FileNotFoundException {
 
         String path = "";
 
-        AnalyseurLexical analyseurLexical = new AnalyseurLexical(path);
+        Compilateur compilateur = new Compilateur(path);
+        compilateur.analyseurLexical.lire_car();
+
     }
 }
