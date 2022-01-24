@@ -11,7 +11,7 @@ public class Compilateur {
     static char carlu;
     static int nombre;
     static String chaine;
-    static int num_ligne = 0;
+    static int num_ligne;
     static String[] table_mots_reserves = new String[NB_MOTS_RESERVES];
 
     AnalyseurLexical analyseurLexical = new AnalyseurLexical();
@@ -20,13 +20,27 @@ public class Compilateur {
         source = new File(path);
     }
 
+    public void initialiser() throws FileNotFoundException {
+        analyseurLexical.initialiser();
+    }
+
+    public void printTableMotsReserves(){
+        for(int i = 0; i < table_mots_reserves.length; i++){
+            System.out.println(table_mots_reserves[i]);
+        }
+    }
+
 
     public static void main(String args[]) throws FileNotFoundException {
 
         String path = "";
 
         Compilateur compilateur = new Compilateur(path);
-        compilateur.analyseurLexical.lire_car();
+        compilateur.initialiser();
+        compilateur.printTableMotsReserves();
+
+
+        //compilateur.analyseurLexical.lire_car();
 
     }
 }
