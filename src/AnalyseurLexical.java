@@ -48,6 +48,10 @@ public class AnalyseurLexical {
 
     }
 
+    public void terminer(){
+        scanner.close();
+    }
+
     public void lire_car() {
 
         //todo : gérer l'appel aux autres fonctions

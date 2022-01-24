@@ -24,6 +24,10 @@ public class Compilateur {
         analyseurLexical.initialiser();
     }
 
+    public void terminer(){
+        analyseurLexical.terminer();
+    }
+
     public void printTableMotsReserves(){
         for(int i = 0; i < table_mots_reserves.length; i++){
             System.out.println(table_mots_reserves[i]);
@@ -41,6 +45,8 @@ public class Compilateur {
 
 
         //compilateur.analyseurLexical.lire_car();
+
+        compilateur.terminer();
 
     }
 }
