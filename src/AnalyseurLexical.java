@@ -7,10 +7,13 @@ import java.util.Scanner;
 public class AnalyseurLexical {
 
     RandomAccessFile file;
+
     final int asciiRetourCharriot = 13;
     final int asciiSautDeLigne = 10;
     final int asciiDebutEntier = 48;
     final int asciiFinEntier = 57;
+
+    final int MAXINT = 32767;
 
     public void erreur(int numErr){
         GestionErreur.erreur(numErr);
@@ -76,6 +79,7 @@ public class AnalyseurLexical {
             }
             if(car >= asciiDebutEntier && car <= asciiFinEntier){
                 reco_entier();
+                return;
             }
 
             car = file.read();
@@ -83,19 +87,47 @@ public class AnalyseurLexical {
 
         erreur(1);
 
-
+    //System.getProperty("line.separator")
 
 
     }
 
 
-    public void reco_entier(){
+    public Compilateur.T_UNILEX reco_entier() throws IOException {
 
+        String nombre;
+        char temp = Compilateur.carlu;
+        int car = file.read();
+        Compilateur.carlu = (char)car;
+        nombre = Character.toString(temp)+Character.toString(Compilateur.carlu);
+        nombre = temp+""+Compilateur.carlu;
+        car = file.read();
+
+
+        while(car >= asciiDebutEntier && car <= asciiFinEntier){
+
+            Compilateur.carlu = (char)car;
+            nombre = nombre+""+Compilateur.carlu;
+            car = file.read();
+
+        }
+
+        long pointer = file.getFilePointer();
+        file.seek(pointer-1);
+
+
+        int nombreFinal = Integer.parseInt(nombre);
+        if(nombreFinal <= MAXINT){
+            Compilateur.nombre = nombreFinal;
+        }
+        else{
+            erreur(2);
+            return null;
+        }
+
+        lire_car();
         
-
-       while(){
-
-       }
+        return Compilateur.T_UNILEX.ent;
 
     }
 

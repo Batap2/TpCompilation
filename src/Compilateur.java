@@ -8,6 +8,9 @@ public class Compilateur {
     static final int LONG_MAX_CHAINE = 50;
     static final int NB_MOTS_RESERVES = 7;
 
+    public enum T_UNILEX{motcle, ident, ent, ch, virg, ptvirg, point, deuxpts, parouv, parfer, inf, sup, eg, plus, moins,
+    mult, divi, infe, supe, diff, aff};
+
     static File source;
     static char carlu;
     static int nombre;
@@ -42,7 +45,7 @@ public class Compilateur {
 
         Compilateur compilateur = new Compilateur(path);
         compilateur.initialiser();
-        compilateur.printTableMotsReserves();
+        //compilateur.printTableMotsReserves();
 
 
         compilateur.analyseurLexical.lire_car();
