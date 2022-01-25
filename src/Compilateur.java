@@ -38,7 +38,7 @@ public class Compilateur {
 
     public static void main(String args[]) throws IOException {
 
-        String path = "C:\\Users\\pikam\\Documents\\Dossier_Manon\\Fac\\L3\\Compilation\\TP\\TpCompilation\\test.txt";
+        String path = "test.txt";
 
         Compilateur compilateur = new Compilateur(path);
         compilateur.initialiser();

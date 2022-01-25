@@ -7,7 +7,10 @@ import java.util.Scanner;
 public class AnalyseurLexical {
 
     RandomAccessFile file;
+    final int asciiRetourCharriot = 13;
     final int asciiSautDeLigne = 10;
+    final int asciiDebutEntier = 48;
+    final int asciiFinEntier = 57;
 
     public void erreur(int numErr){
         GestionErreur.erreur(numErr);
@@ -62,12 +65,19 @@ public class AnalyseurLexical {
 
         int car = file.read();
         while(car != -1){
-            System.out.println(car+"\n");
             Compilateur.carlu = (char)car;
-            if(car == asciiSautDeLigne){
+
+            System.out.println(car);
+
+            if(car == asciiRetourCharriot){
+                System.out.println("saut");
+                car = file.read(); // va correspondre au asciiSautDeLigne
                 Compilateur.num_ligne ++;
-                System.out.println("saut de ligne");
             }
+            if(car >= asciiDebutEntier && car <= asciiFinEntier){
+                reco_entier();
+            }
+
             car = file.read();
         }
 
@@ -81,7 +91,11 @@ public class AnalyseurLexical {
 
     public void reco_entier(){
 
-       // while()
+        
+
+       while(){
+
+       }
 
     }
 
