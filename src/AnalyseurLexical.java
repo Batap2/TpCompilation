@@ -1,18 +1,21 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.Scanner;
 
 public class AnalyseurLexical {
 
-    Scanner scanner;
+    RandomAccessFile file;
+    final int asciiSautDeLigne = 10;
 
     public void erreur(int numErr){
         GestionErreur.erreur(numErr);
     }
 
     public void initialiser() throws FileNotFoundException {
-        Compilateur.num_ligne = 0;
-        //scanner = new Scanner(Compilateur.source);
+        Compilateur.num_ligne = 1;
+        file = new RandomAccessFile(Compilateur.source, "r");
         insere_table_mots_reserves("PROGRAMME");
         insere_table_mots_reserves("DEBUT");
         insere_table_mots_reserves("FIN");
@@ -48,26 +51,37 @@ public class AnalyseurLexical {
 
     }
 
-    public void terminer(){
-        scanner.close();
+
+    public void terminer() throws IOException {
+        file.close();
     }
 
-    public void lire_car() {
+    public void lire_car() throws IOException {
 
         //todo : gérer l'appel aux autres fonctions
 
-        while (scanner.hasNext()){
-            String line = scanner.nextLine();
-            Compilateur.num_ligne ++;
-
-            for(int characterIndex = 0; characterIndex <line.length(); characterIndex++){
-                char character = line.charAt(characterIndex);
-                Compilateur.carlu = character;
-
+        int car = file.read();
+        while(car != -1){
+            System.out.println(car+"\n");
+            Compilateur.carlu = (char)car;
+            if(car == asciiSautDeLigne){
+                Compilateur.num_ligne ++;
+                System.out.println("saut de ligne");
             }
-
+            car = file.read();
         }
+
         erreur(1);
+
+
+
+
+    }
+
+
+    public void reco_entier(){
+
+       // while()
 
     }
 

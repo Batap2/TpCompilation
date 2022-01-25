@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class Compilateur {
 
@@ -24,7 +25,7 @@ public class Compilateur {
         analyseurLexical.initialiser();
     }
 
-    public void terminer(){
+    public void terminer() throws IOException {
         analyseurLexical.terminer();
     }
 
@@ -35,16 +36,16 @@ public class Compilateur {
     }
 
 
-    public static void main(String args[]) throws FileNotFoundException {
+    public static void main(String args[]) throws IOException {
 
-        String path = "";
+        String path = "C:\\Users\\pikam\\Documents\\Dossier_Manon\\Fac\\L3\\Compilation\\TP\\TpCompilation\\test.txt";
 
         Compilateur compilateur = new Compilateur(path);
         compilateur.initialiser();
         compilateur.printTableMotsReserves();
 
 
-        //compilateur.analyseurLexical.lire_car();
+        compilateur.analyseurLexical.lire_car();
 
         compilateur.terminer();
 
