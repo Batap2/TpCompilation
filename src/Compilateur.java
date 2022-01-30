@@ -13,11 +13,11 @@ public class Compilateur {
                           parfer, inf, sup, eg, plus, moins,
                           mult, divi, infe, supe, diff, aff };
 
-    static File source;
-    static char carlu;
-    static int nombre;
-    static String chaine;
-    static int num_ligne;
+    static File source;     // fichier source
+    static char carlu;      // le dernier caractère lu
+    static int nombre;      // le dernier nombre lu
+    static String chaine;   // la dernière chaine de caractères lue
+    static int num_ligne;   // num de la ligne actuelle
     static String[] table_mots_reserves = new String[NB_MOTS_RESERVES];
 
     AnalyseurLexical analyseurLexical = new AnalyseurLexical();
@@ -50,7 +50,7 @@ public class Compilateur {
         //compilateur.printTableMotsReserves();
 
 
-        compilateur.analyseurLexical.lire_car();
+        compilateur.analyseurLexical.analex();
 
         compilateur.terminer();
 
