@@ -93,6 +93,7 @@ public class AnalyseurLexical {
         Compilateur.carlu = (char)file.read();
 
         if(Compilateur.carlu == asciiEOF){
+            //todo : regler la double erreur fin de fichier
             erreur(1);
         }
 
@@ -102,6 +103,8 @@ public class AnalyseurLexical {
     }
 
     public void sauter_Separateur() throws IOException {
+
+        //todo : prendre en compte commentaires imbriqués
 
         // le Retour Chariot (\r) n'est utilisé que sur windows pour faire un retour a la ligne,
         // il sera automatiquement suivi d'un caractère de retour à la ligne (\n)
@@ -193,7 +196,7 @@ public class AnalyseurLexical {
         return Compilateur.T_UNILEX.ident;
     }
 
-    public boolean est_Un_Mot_Reserve(){
+    private boolean est_Un_Mot_Reserve(){
         for(String motRes : Compilateur.table_mots_reserves){
             if(Compilateur.chaine.equals(motRes)) return true;
         }
@@ -335,7 +338,7 @@ public class AnalyseurLexical {
     }
 
     // Retourne au caractère précédent. Si le caractère précédent était un LF on doit décrémenter num_ligne
-    public void returnToPreviousChar() throws IOException {
+    private void returnToPreviousChar() throws IOException {
 
         if(file.getFilePointer() > 0 && file.getFilePointer() <= file.length()){
 
@@ -356,7 +359,7 @@ public class AnalyseurLexical {
     }
 
     // Dit si oui ou non CARLU est un symbole simple
-    public boolean isSymboleSimple(){
+    private boolean isSymboleSimple(){
         char car = Compilateur.carlu;
         return car == asciiComa | car == asciiSemicolon | car == asciiDot |
                 car == asciiColon | car == asciiLParenthesis | car == asciiRParenthesis |
