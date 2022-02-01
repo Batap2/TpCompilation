@@ -22,6 +22,12 @@ public class Compilateur {
 
     AnalyseurLexical analyseurLexical = new AnalyseurLexical();
 
+    static public TableIdentificateur tableIdentificateur = new TableIdentificateur();
+
+    public TableIdentificateur getTableIdentificateur(){
+        return tableIdentificateur;
+    }
+
     public Compilateur(String path){
         source = new File(path);
     }
@@ -53,6 +59,7 @@ public class Compilateur {
         compilateur.analyseurLexical.analex();
 
         compilateur.terminer();
+        compilateur.getTableIdentificateur().affiche_table_ident();
 
     }
 }

@@ -325,6 +325,12 @@ public class AnalyseurLexical {
             if(Character.isLetter(Compilateur.carlu)){
                 unilexLue = reco_Ident_Ou_Mot_Reserve();
                 System.out.println(unilexLue);
+                if(unilexLue == Compilateur.T_UNILEX.ident){
+                    if(Compilateur.tableIdentificateur.chercher(Compilateur.chaine) == -1){
+                        Compilateur.tableIdentificateur.inserer(Compilateur.chaine, null);
+                    }
+                }
+
                 continue;
             }
 
