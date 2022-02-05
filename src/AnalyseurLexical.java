@@ -40,6 +40,9 @@ public class AnalyseurLexical {
     final int asciiSlash = 47;                  // /
     final int asciiUnderscore = 95;             // _
 
+    // boolean disant si on lit un caractère au sein d'une fonction. True = on ne le lit pas dans une fonction
+    private boolean lectureSeule;
+
     // Gère les erreurs
     public void erreur(int numErr){
         GestionErreur.erreur(numErr);
@@ -92,8 +95,7 @@ public class AnalyseurLexical {
     public void lire_car() throws IOException {
         Compilateur.carlu = (char)file.read();
 
-        if(Compilateur.carlu == asciiEOF){
-            //todo : regler la double erreur fin de fichier
+        if(Compilateur.carlu == asciiEOF && lectureSeule){
             erreur(1);
         }
 
@@ -103,9 +105,6 @@ public class AnalyseurLexical {
     }
 
     public void sauter_Separateur() throws IOException {
-
-        //todo : prendre en compte commentaires imbriqués
-
         // le Retour Chariot (\r) n'est utilisé que sur windows pour faire un retour a la ligne,
         // il sera automatiquement suivi d'un caractère de retour à la ligne (\n)
         // donc on passe ce caractère
@@ -114,10 +113,17 @@ public class AnalyseurLexical {
         }
 
         if(Compilateur.carlu == asciiLBrakets){
-            while(Compilateur.carlu != asciiRBrakets){
+            int nbBracket = 1;
+
+            while(nbBracket != 0){
                 lire_car();
+                if(Compilateur.carlu == asciiRBrakets){
+                    nbBracket--;
+                }
+                if(Compilateur.carlu == asciiLBrakets){
+                    nbBracket++;
+                }
             }
-            return;
         }
     }
 
@@ -298,7 +304,9 @@ public class AnalyseurLexical {
 
     public void analex() throws IOException {
         do{
+            lectureSeule = true;
             lire_car();
+            lectureSeule = false;
             Compilateur.T_UNILEX unilexLue = null;
 
             // car : Séparateur || Symbole de début de commentaire

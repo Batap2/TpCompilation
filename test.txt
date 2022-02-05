@@ -1,6 +1,6 @@
 12 34
 'c''est mort'
-ouais {foutu}
+ouais {foutu {COMMENT ?} }
 ECRIRE
 ;
 .
