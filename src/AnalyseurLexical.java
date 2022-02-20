@@ -302,53 +302,62 @@ public class AnalyseurLexical {
         return returnUnilex;
     }
 
-    public void analex() throws IOException {
+    public void boucle() throws IOException{
+
         do{
             lectureSeule = true;
             lire_car();
             lectureSeule = false;
-            Compilateur.T_UNILEX unilexLue = null;
+            Compilateur.UNILEX = analex();
+        }
+        while(Compilateur.carlu != asciiEOF);
+    }
 
-            // car : Séparateur || Symbole de début de commentaire
-            if(Compilateur.carlu == asciiSpace || Compilateur.carlu == asciiTab ||
-                    Compilateur.carlu == asciiLineFeed || Compilateur.carlu == asciiCarriageReturn || Compilateur.carlu == asciiLBrakets){
-                sauter_Separateur();
-            }
+    public Compilateur.T_UNILEX analex() throws IOException {
 
-            // car : Chiffre
-            if(Character.isDigit(Compilateur.carlu)){
-                unilexLue = reco_Entier();
-                System.out.println(unilexLue);
-                continue;
-            }
 
-            // car : Apostrophe
-            if(Compilateur.carlu == asciiApostrophe){
-                unilexLue = reco_Chaine();
-                System.out.println(unilexLue);
-                continue;
-            }
+        Compilateur.T_UNILEX unilexLue;
 
-            // car : Caractère majuscule ou minuscule
-            if(Character.isLetter(Compilateur.carlu)){
-                unilexLue = reco_Ident_Ou_Mot_Reserve();
-                System.out.println(unilexLue);
-                if(unilexLue == Compilateur.T_UNILEX.ident){
-                    if(Compilateur.tableIdentificateur.chercher(Compilateur.chaine) == -1){
-                        Compilateur.tableIdentificateur.inserer(Compilateur.chaine, null);
-                    }
+        // car : Séparateur || Symbole de début de commentaire
+        if(Compilateur.carlu == asciiSpace || Compilateur.carlu == asciiTab ||
+                Compilateur.carlu == asciiLineFeed || Compilateur.carlu == asciiCarriageReturn || Compilateur.carlu == asciiLBrakets){
+            sauter_Separateur();
+        }
+
+        // car : Chiffre
+        if(Character.isDigit(Compilateur.carlu)){
+            unilexLue = reco_Entier();
+            System.out.println(unilexLue);
+            return unilexLue;
+        }
+
+        // car : Apostrophe
+        if(Compilateur.carlu == asciiApostrophe){
+            unilexLue = reco_Chaine();
+            System.out.println(unilexLue);
+            return unilexLue;
+        }
+
+        // car : Caractère majuscule ou minuscule
+        if(Character.isLetter(Compilateur.carlu)){
+            unilexLue = reco_Ident_Ou_Mot_Reserve();
+            System.out.println(unilexLue);
+            if(unilexLue == Compilateur.T_UNILEX.ident){
+                if(Compilateur.tableIdentificateur.chercher(Compilateur.chaine) == -1){
+                    Compilateur.tableIdentificateur.inserer(Compilateur.chaine, null);
                 }
-
-                continue;
             }
+            return unilexLue;
+        }
 
-            // car : Symbole simple { , ; . : ( ) < > = + - * / }
-            if(isSymboleSimple()){
-                unilexLue = reco_Symb();
-                System.out.println(unilexLue);
-                continue;
-            }
-        } while(Compilateur.carlu != asciiEOF);
+        // car : Symbole simple { , ; . : ( ) < > = + - * / }
+        if(isSymboleSimple()){
+            unilexLue = reco_Symb();
+            System.out.println(unilexLue);
+            return unilexLue;
+        }
+
+        return null;
     }
 
     // Retourne au caractère précédent. Si le caractère précédent était un LF on doit décrémenter num_ligne

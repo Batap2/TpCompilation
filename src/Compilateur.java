@@ -19,14 +19,17 @@ public class Compilateur {
     static String chaine;   // la dernière chaine de caractères lue
     static int num_ligne;   // num de la ligne actuelle
     static String[] table_mots_reserves = new String[NB_MOTS_RESERVES];
+    static T_UNILEX UNILEX; //la dernière unité lexicale reconnue
 
-    AnalyseurLexical analyseurLexical = new AnalyseurLexical();
+
+    static AnalyseurLexical analyseurLexical = new AnalyseurLexical();
 
     static public TableIdentificateur tableIdentificateur = new TableIdentificateur();
 
     public TableIdentificateur getTableIdentificateur(){
         return tableIdentificateur;
     }
+
 
     public Compilateur(String path){
         source = new File(path);
@@ -56,7 +59,7 @@ public class Compilateur {
         //compilateur.printTableMotsReserves();
 
 
-        compilateur.analyseurLexical.analex();
+        compilateur.analyseurLexical.boucle();
 
         compilateur.terminer();
         compilateur.getTableIdentificateur().affiche_table_ident();
