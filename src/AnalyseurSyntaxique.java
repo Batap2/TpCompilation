@@ -205,7 +205,7 @@ public class AnalyseurSyntaxique {
             }
         }
         else if(Compilateur.UNILEX == Compilateur.T_UNILEX.moins){
-            //todo 
+            //todo
         }
 
         return false;
