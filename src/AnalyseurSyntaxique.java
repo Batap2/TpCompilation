@@ -21,13 +21,32 @@ public class AnalyseurSyntaxique {
                 Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
                 if(Compilateur.UNILEX == Compilateur.T_UNILEX.ptvirg){
                     Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
-                    //todo continue
-
+                    decl_const();
+                    decl_var();
+                    if(bloc()){
+                        if(Compilateur.UNILEX == Compilateur.T_UNILEX.point){
+                            return true;
+                        }
+                        else{
+                            return false; // . attendu
+                        }
+                    }
+                    else{
+                        return false; //bloc incorrect
+                    }
+                }
+                else{
+                    return false; // ; attendu
                 }
             }
+            else{
+                return false; // ident attendu
+            }
+        }
+        else{
+            return false; // mot clé programme attendu
         }
 
-        return false;
     }
 
 
@@ -151,7 +170,6 @@ public class AnalyseurSyntaxique {
 
     //'debut' instruction {';' instruction } 'fin'
     public boolean bloc() throws IOException {
-        //Todo
         boolean fin, erreur;
 
         if(Compilateur.UNILEX == Compilateur.T_UNILEX.motcle && Compilateur.chaine.equals("DEBUT")){
@@ -162,15 +180,34 @@ public class AnalyseurSyntaxique {
                 while(!fin){
                     if(Compilateur.UNILEX == Compilateur.T_UNILEX.ptvirg){
                         Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
-                        if(instruction()){
-                            
+                        if(!instruction()){
+                            erreur = true;
+                            fin = true;
                         }
                     }
+                    else{
+                        fin = true;
+                    }
+                }
+                if(erreur){
+                    return false; //instruction invalide
+                }
+                else if(Compilateur.UNILEX == Compilateur.T_UNILEX.motcle && Compilateur.chaine.equals("FIN")){
+                    Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+                    return true;
+                }
+                else{
+                    return false; //mot clé fin attendu
                 }
             }
+            else{
+                return false; //instruction invalide
+            }
+        }
+        else{
+            return false; //mot clé debut attendu
         }
 
-        return false;
     }
 
     // instruction -> affectation | lecture | ecriture | bloc
@@ -301,9 +338,21 @@ public class AnalyseurSyntaxique {
     }
 
     // ecr_exp -> exp | 'ch'
-    public boolean ecr_exp(){
-        //Todo
-        return false;
+    public boolean ecr_exp() throws IOException {
+
+        if(!exp()){
+            if(Compilateur.UNILEX == Compilateur.T_UNILEX.ch){
+                Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return true;
+        }
+
     }
 
     // exp -> terme suite_terme
@@ -317,9 +366,18 @@ public class AnalyseurSyntaxique {
     }
 
     // epsilon | op_bin exp
-    public boolean suite_terme(){
-        //Todo
-        return false;
+    public boolean suite_terme() throws IOException {
+        if(op_bin()){
+            if(exp()){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return true; //epsilon
+        }
     }
 
     // 'ent' | 'ident' | '(' exp ')' | '-' terme
@@ -347,7 +405,13 @@ public class AnalyseurSyntaxique {
             }
         }
         else if(Compilateur.UNILEX == Compilateur.T_UNILEX.moins){
-            //todo
+            Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+            if(!terme()){
+                return false;
+            }
+            else{
+                return true;
+            }
         }
 
         return false;
