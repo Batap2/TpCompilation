@@ -19,10 +19,11 @@ public class Compilateur {
     static String chaine;   // la dernière chaine de caractères lue
     static int num_ligne;   // num de la ligne actuelle
     static String[] table_mots_reserves = new String[NB_MOTS_RESERVES];
-    static T_UNILEX UNILEX; //la dernière unité lexicale reconnue
+    public static T_UNILEX UNILEX; //la dernière unité lexicale reconnue
 
 
     static AnalyseurLexical analyseurLexical = new AnalyseurLexical();
+    static AnalyseurSyntaxique analyseurSyntaxique = new AnalyseurSyntaxique();
 
     static public TableIdentificateur tableIdentificateur = new TableIdentificateur();
 
@@ -52,17 +53,19 @@ public class Compilateur {
 
     public static void main(String args[]) throws IOException {
 
-        String path = "test.txt";
+        String path = "src/testSyntaxe";
 
         Compilateur compilateur = new Compilateur(path);
         compilateur.initialiser();
         //compilateur.printTableMotsReserves();
 
+        compilateur.analyseurSyntaxique.anasynt();
 
-        compilateur.analyseurLexical.boucle();
+        //compilateur.analyseurLexical.boucle();
+
 
         compilateur.terminer();
-        compilateur.getTableIdentificateur().affiche_table_ident();
+        //compilateur.getTableIdentificateur().affiche_table_ident();
 
     }
 }

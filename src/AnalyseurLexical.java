@@ -93,6 +93,7 @@ public class AnalyseurLexical {
     // Lit le prochain caractère du fichier source, si c'est la fin du fichier affiche l'erreur de fin de fichier
     // Incrémente la variable globale num-ligne si le caractère est un LineFeed
     public void lire_car() throws IOException {
+        //System.out.println((char)file.read());
         Compilateur.carlu = (char)file.read();
 
         if(Compilateur.carlu == asciiEOF && lectureSeule){
@@ -194,6 +195,7 @@ public class AnalyseurLexical {
         }
 
         Compilateur.chaine = str.toString().toUpperCase();
+        //System.out.println(Compilateur.chaine);
         returnToPreviousChar();
 
         if(est_Un_Mot_Reserve()){
@@ -315,6 +317,9 @@ public class AnalyseurLexical {
 
     public Compilateur.T_UNILEX analex() throws IOException {
 
+        lectureSeule = true;
+        lire_car();
+        lectureSeule = false;
 
         Compilateur.T_UNILEX unilexLue;
 

@@ -2,6 +2,8 @@ import java.io.IOException;
 
 public class AnalyseurSyntaxique {
 
+    private AnalyseurLexical analyseurLexical = new AnalyseurLexical();
+
     public void anasynt() throws IOException {
         Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
         if(prog()){
@@ -14,7 +16,7 @@ public class AnalyseurSyntaxique {
 
     // prog -> 'programme' 'ident' ';' [decl_const][decl_var] bloc '.'
     public boolean prog() throws IOException {
-
+        //System.out.println(Compilateur.UNILEX);
         if(Compilateur.UNILEX == Compilateur.T_UNILEX.motcle && Compilateur.chaine.equals("PROGRAMME")){
             Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
             if(Compilateur.UNILEX == Compilateur.T_UNILEX.ident){
@@ -28,22 +30,28 @@ public class AnalyseurSyntaxique {
                             return true;
                         }
                         else{
+                            System.out.println(". attendu");
                             return false; // . attendu
                         }
                     }
                     else{
+                        System.out.println("bloc incorrect");
                         return false; //bloc incorrect
                     }
                 }
                 else{
+                    System.out.println("; attendu");
                     return false; // ; attendu
                 }
             }
             else{
+                System.out.println("ident attendu");
                 return false; // ident attendu
             }
         }
         else{
+            System.out.println("mot clé programme attendu");
+            System.out.println(Compilateur.chaine);
             return false; // mot clé programme attendu
         }
 
@@ -197,6 +205,7 @@ public class AnalyseurSyntaxique {
                     return true;
                 }
                 else{
+                    System.out.println("mot cle fin attendu");
                     return false; //mot clé fin attendu
                 }
             }
@@ -301,7 +310,6 @@ public class AnalyseurSyntaxique {
                 Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
                 erreur = false;
                 if(ecr_exp()){
-                    Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
                     fin = false;
                     while(!fin){
                         if(Compilateur.UNILEX == Compilateur.T_UNILEX.virg){

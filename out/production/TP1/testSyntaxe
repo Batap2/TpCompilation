@@ -1,0 +1,9 @@
+programme exemple;
+var nb;
+debut
+    ecrire('Entrez un nombre entier:');
+    lire(nb);
+    nb := nb*nb;
+    ecrire();
+    ecrire('le carré du nombre est:', nb)
+fin.
