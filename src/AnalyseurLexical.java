@@ -304,12 +304,9 @@ public class AnalyseurLexical {
         return returnUnilex;
     }
 
-    public void boucle() throws IOException{
+    public void boucleTest() throws IOException{
 
         do{
-            lectureSeule = true;
-            lire_car();
-            lectureSeule = false;
             Compilateur.UNILEX = analex();
         }
         while(Compilateur.carlu != asciiEOF);

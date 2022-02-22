@@ -1,0 +1,22 @@
+12 34
+'c''est moi mickey !'
+ouais {non {COMMENT ?} }
+ECRIRE
+DEBUT
+=
+;
+.
++
+-
+*
+/
+(
+)
+,
+<=
+<>
+<
+>=
+>
+:=
+:

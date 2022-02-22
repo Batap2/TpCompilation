@@ -53,15 +53,15 @@ public class Compilateur {
 
     public static void main(String args[]) throws IOException {
 
-        String path = "src/testSyntaxe";
+        String path = "testLexical.txt";
 
         Compilateur compilateur = new Compilateur(path);
         compilateur.initialiser();
         //compilateur.printTableMotsReserves();
 
-        compilateur.analyseurSyntaxique.anasynt();
+        //compilateur.analyseurSyntaxique.anasynt();
 
-        //compilateur.analyseurLexical.boucle();
+        compilateur.analyseurLexical.boucleTest();
 
 
         compilateur.terminer();

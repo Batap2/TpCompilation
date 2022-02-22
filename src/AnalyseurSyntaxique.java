@@ -2,7 +2,7 @@ import java.io.IOException;
 
 public class AnalyseurSyntaxique {
 
-    private AnalyseurLexical analyseurLexical = new AnalyseurLexical();
+    //private AnalyseurLexical analyseurLexical = new AnalyseurLexical();
 
     public void anasynt() throws IOException {
         Compilateur.UNILEX = Compilateur.analyseurLexical.analex();

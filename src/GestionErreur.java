@@ -14,6 +14,6 @@ public class GestionErreur {
         } else {
             System.out.println(tableauErreurs[0]);
         }
-        //System.exit(0);
+        System.exit(0);
     }
 }
