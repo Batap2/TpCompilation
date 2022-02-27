@@ -4,7 +4,7 @@ var nb, nbbis;
 debut
     ecrire('Entrez un nombre entier:');
     lire(nb);
-    nb := nb*const1;
+    const1 := nb*nb;
     ecrire();
     ecrire('le carré du nombre est:', nb)
 fin.

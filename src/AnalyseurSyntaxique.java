@@ -273,9 +273,27 @@ public class AnalyseurSyntaxique {
         }
     }
 
+    private boolean isDeclaredVariable(){
+        int indice = Compilateur.tableIdentificateur.chercher(Compilateur.chaine);
+        if(indice == -1){
+            return false; //erreur semantique : ident pas déclaré
+        }
+        else{
+            if(Compilateur.tableIdentificateur.enregIdents.get(indice).getGenre() != EnregIdent.GENRE.variable){
+                return false; //pas une variable
+            }
+        }
+        return true;
+    }
+
     // affectation -> 'ident' ':=' exp
     public boolean affectation() throws IOException {
         if(Compilateur.UNILEX == Compilateur.T_UNILEX.ident){
+
+            if(!isDeclaredVariable()){
+                return false;
+            }
+
             Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
             if(Compilateur.UNILEX == Compilateur.T_UNILEX.aff){
                 Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
@@ -300,6 +318,11 @@ public class AnalyseurSyntaxique {
             if(Compilateur.UNILEX == Compilateur.T_UNILEX.parouv){
                 Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
                 if(Compilateur.UNILEX == Compilateur.T_UNILEX.ident){
+
+                    if(!isDeclaredVariable()){
+                        return false;
+                    }
+
                     Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
                     fin = false;
                     erreur = false;
@@ -307,6 +330,11 @@ public class AnalyseurSyntaxique {
                         if(Compilateur.UNILEX == Compilateur.T_UNILEX.virg){
                             Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
                             if(Compilateur.UNILEX == Compilateur.T_UNILEX.ident){
+
+                                if(!isDeclaredVariable()){
+                                    return false;
+                                }
+
                                 Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
                             }
                             else{
@@ -434,11 +462,26 @@ public class AnalyseurSyntaxique {
     // 'ent' | 'ident' | '(' exp ')' | '-' terme
     public boolean terme() throws IOException {
 
-        if(Compilateur.UNILEX == Compilateur.T_UNILEX.ent ||
-        Compilateur.UNILEX == Compilateur.T_UNILEX.ident){
+        if(Compilateur.UNILEX == Compilateur.T_UNILEX.ent){
             Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
             return true;
         }
+
+        if(Compilateur.UNILEX == Compilateur.T_UNILEX.ident){
+            int indice = Compilateur.tableIdentificateur.chercher(Compilateur.chaine);
+            if(indice == -1){
+                return false; //ident pas déclaré
+            }
+            else{
+                if(Compilateur.tableIdentificateur.enregIdents.get(indice).getType() != EnregIdent.TYPE.entier){
+                    return false;
+                }
+            }
+
+            Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+            return true;
+        }
+
         else if(Compilateur.UNILEX == Compilateur.T_UNILEX.parouv){
             Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
             if(exp()){

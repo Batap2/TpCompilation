@@ -3,7 +3,7 @@ const const1 = 12;
 var nb, nbbis;
 debut
     ecrire('Entrez un nombre entier:');
-    lire(nb);
+    lire(nb1);
     nb := nb*const1;
     ecrire();
     ecrire('le carré du nombre est:', nb)

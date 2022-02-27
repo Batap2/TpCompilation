@@ -25,6 +25,14 @@ public class EnregIdent {
         return nom;
     }
 
+    public GENRE getGenre(){
+        return genre;
+    }
+
+    public TYPE getType(){
+        return type;
+    }
+
     @Override
     public String toString(){
         StringBuilder builder = new StringBuilder();
