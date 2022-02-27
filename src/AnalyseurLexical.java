@@ -312,6 +312,14 @@ public class AnalyseurLexical {
         while(Compilateur.carlu != asciiEOF);
     }
 
+    public void testTableIdent(Compilateur.T_UNILEX unilexLue){
+        if(unilexLue == Compilateur.T_UNILEX.ident){
+            if(Compilateur.tableIdentificateur.chercher(Compilateur.chaine) == -1){
+                Compilateur.tableIdentificateur.inserer(new EnregIdent(Compilateur.chaine, null));
+            }
+        }
+    }
+
     public Compilateur.T_UNILEX analex() throws IOException {
 
         lectureSeule = true;
@@ -343,12 +351,8 @@ public class AnalyseurLexical {
         // car : Caractère majuscule ou minuscule
         if(Character.isLetter(Compilateur.carlu)){
             unilexLue = reco_Ident_Ou_Mot_Reserve();
+            //testTableIdent(unilexLue);
             System.out.println(unilexLue);
-            if(unilexLue == Compilateur.T_UNILEX.ident){
-                if(Compilateur.tableIdentificateur.chercher(Compilateur.chaine) == -1){
-                    Compilateur.tableIdentificateur.inserer(Compilateur.chaine, null);
-                }
-            }
             return unilexLue;
         }
 

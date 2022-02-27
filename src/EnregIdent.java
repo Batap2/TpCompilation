@@ -1,11 +1,25 @@
 public class EnregIdent {
 
     public enum GENRE{constante, variable, fonction, procedure, type};
+    public enum TYPE{entier, chaine}
 
     private String nom;
     private GENRE genre;
-    private String valeur; //si int on parseToInt
-    private int adresse;
+    private TYPE type;
+    private int valeur;
+    private int adresse = -1;
+
+    public void setType(TYPE type){
+        this.type= type;
+    }
+
+    public void setValeur(int valeur){
+        this.valeur = valeur;
+    }
+
+    public void setAdresse(int adresse){
+        this.adresse = adresse;
+    }
 
     public String getNom(){
         return nom;
@@ -33,7 +47,23 @@ public class EnregIdent {
         else{
             builder.append("null ");
         }
-        builder.append(valeur+ " ");
+        if(type == TYPE.entier){
+            builder.append("entier ");
+        }
+        else if(type == TYPE.chaine){
+            builder.append("chaine ");
+        }
+        else{
+            builder.append("null ");
+        }
+        if(this.genre == GENRE.constante && this.type == TYPE.chaine){
+            builder.append(Compilateur.VAL_DE_CONST_CHAINE.get(valeur));
+            builder.append(" ");
+        }
+        else{
+            builder.append(valeur+ " ");
+        }
+
         builder.append(adresse);
         return builder.toString();
     }
@@ -44,7 +74,7 @@ public class EnregIdent {
     }
 
     static public String[] getAttributs(){
-        return new String[]{"nom", "genre", "valeur", "adresse"};
+        return new String[]{"nom", "genre", "type", "valeur", "adresse"};
     }
 
 }

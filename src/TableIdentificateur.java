@@ -16,8 +16,7 @@ public class TableIdentificateur {
         return INDEX_NO_FOUND;
     }
 
-    public int inserer(String name, EnregIdent.GENRE genre){
-        EnregIdent enregIdent = new EnregIdent(name, genre);
+    public int inserer(EnregIdent enregIdent){
         enregIdents.add(enregIdent);
         return enregIdents.size()-1;
     }

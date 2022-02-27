@@ -3,11 +3,13 @@ import java.io.IOException;
 public class AnalyseurSyntaxique {
 
     //private AnalyseurLexical analyseurLexical = new AnalyseurLexical();
+    private AnalyseurSemantique analyseurSemantique = new AnalyseurSemantique();
 
     public void anasynt() throws IOException {
         Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
         if(prog()){
             System.out.println("Le programme source est syntaxiquement correct");
+            Compilateur.getTableIdentificateur().affiche_table_ident();
         }
         else{
             GestionErreur.erreur(3);
@@ -61,56 +63,79 @@ public class AnalyseurSyntaxique {
     // decl_const -> 'const' 'ident' '=' ('ent' | 'ch') { ',' 'ident' '=' ('ent' | 'ch')}';'
     public boolean decl_const() throws IOException {
         boolean fin, erreur;
+        String nom_constante;
 
         if(Compilateur.UNILEX == Compilateur.T_UNILEX.motcle && Compilateur.chaine.equals("CONST")){
             Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
             if(Compilateur.UNILEX == Compilateur.T_UNILEX.ident){
+
+                nom_constante = Compilateur.chaine;
+
                 Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
                 if(Compilateur.UNILEX == Compilateur.T_UNILEX.eg){
                     Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
                     if(Compilateur.UNILEX == Compilateur.T_UNILEX.ent || Compilateur.UNILEX == Compilateur.T_UNILEX.ch){
-                        Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
-                        fin = false;
-                        erreur = false;
-                        while(!fin){
-                            if(Compilateur.UNILEX == Compilateur.T_UNILEX.virg){
-                                Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
-                                if(Compilateur.UNILEX == Compilateur.T_UNILEX.ident){
+
+                        if(analyseurSemantique.definir_constante(nom_constante, Compilateur.UNILEX)){
+                            Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+                            fin = false;
+                            erreur = false;
+                            while(!fin){
+                                if(Compilateur.UNILEX == Compilateur.T_UNILEX.virg){
                                     Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
-                                    if(Compilateur.UNILEX == Compilateur.T_UNILEX.eg){
+                                    if(Compilateur.UNILEX == Compilateur.T_UNILEX.ident){
+
+                                        nom_constante = Compilateur.chaine;
+
                                         Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
-                                        if(Compilateur.UNILEX == Compilateur.T_UNILEX.ent || Compilateur.UNILEX == Compilateur.T_UNILEX.ch){
+                                        if(Compilateur.UNILEX == Compilateur.T_UNILEX.eg){
                                             Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+                                            if(Compilateur.UNILEX == Compilateur.T_UNILEX.ent || Compilateur.UNILEX == Compilateur.T_UNILEX.ch){
+
+                                                if(analyseurSemantique.definir_constante(nom_constante, Compilateur.UNILEX)){
+                                                    Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+                                                    fin = false;
+                                                }
+                                                else{
+                                                    fin = true;
+                                                }
+
+                                            }
+                                            else{
+                                                fin = true;
+                                                erreur = true; //entier ou chaine de caractères attendu
+                                            }
                                         }
                                         else{
                                             fin = true;
-                                            erreur = true; //entier ou chaine de caractères attendu
+                                            erreur = true; //= attendu
                                         }
                                     }
                                     else{
                                         fin = true;
-                                        erreur = true; //= attendu
+                                        erreur = true; //identifiant attendu
                                     }
                                 }
                                 else{
                                     fin = true;
-                                    erreur = true; //identifiant attendu
                                 }
                             }
+                            if(erreur){
+                                return false;
+                            }
+                            else if(Compilateur.UNILEX == Compilateur.T_UNILEX.ptvirg){
+                                Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+                                return true;
+                            }
                             else{
-                                fin = true;
+                                return false; // ; attendu
                             }
                         }
-                        if(erreur){
-                            return false;
-                        }
-                        else if(Compilateur.UNILEX == Compilateur.T_UNILEX.ptvirg){
-                            Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
-                            return true;
-                        }
                         else{
-                            return false; // ; attendu
+                            //todo : erreur semantique
+                            return false; //erreur sémantique dans la déclaration des constantes, ident déjà déclaré
                         }
+
                     }
                     else{
                         return false; //entier ou chaine de caracteres attendu
@@ -133,38 +158,56 @@ public class AnalyseurSyntaxique {
     // 'var' 'ident' {',' 'ident'}';'
     public boolean decl_var() throws IOException {
         boolean erreur, fin;
+        String nom_variable;
 
         if(Compilateur.UNILEX == Compilateur.T_UNILEX.motcle && Compilateur.chaine.equals("VAR")){
             Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
             if(Compilateur.UNILEX == Compilateur.T_UNILEX.ident){
-                Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
-                erreur = false;
-                fin = false;
-                while(!fin){
-                    if(Compilateur.UNILEX == Compilateur.T_UNILEX.virg){
-                        Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
-                        if(Compilateur.UNILEX == Compilateur.T_UNILEX.ident){
+
+                nom_variable = Compilateur.chaine;
+                if(analyseurSemantique.definir_variable(nom_variable)){
+                    Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+                    erreur = false;
+                    fin = false;
+                    while(!fin){
+                        if(Compilateur.UNILEX == Compilateur.T_UNILEX.virg){
                             Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+                            if(Compilateur.UNILEX == Compilateur.T_UNILEX.ident){
+
+                                nom_variable = Compilateur.chaine;
+                                if(analyseurSemantique.definir_variable(nom_variable)){
+                                    Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+                                    fin = false;
+                                }
+                                else{
+                                    fin = true;
+                                }
+
+                            }
+                            else{
+                                erreur = true;
+                                fin = true;
+                            }
                         }
                         else{
-                            erreur = true;
                             fin = true;
                         }
                     }
+                    if(erreur){
+                        return false; //identifiant attendu
+                    }
+                    else if(Compilateur.UNILEX == Compilateur.T_UNILEX.ptvirg){
+                        Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+                        return true;
+                    }
                     else{
-                        fin = true;
+                        return false; // ; attendu
                     }
                 }
-                if(erreur){
-                    return false; //identifiant attendu
-                }
-                else if(Compilateur.UNILEX == Compilateur.T_UNILEX.ptvirg){
-                    Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
-                    return true;
-                }
                 else{
-                    return false; // ; attendu
+                    return false; //erreur sémantique dans la déclaration des variables : identificateur déjà déclaré
                 }
+
             }
             else{
                 return false; //identifiant attendu

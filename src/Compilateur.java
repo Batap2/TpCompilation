@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Compilateur {
 
@@ -20,14 +21,16 @@ public class Compilateur {
     static int num_ligne;   // num de la ligne actuelle
     static String[] table_mots_reserves = new String[NB_MOTS_RESERVES];
     public static T_UNILEX UNILEX; //la dernière unité lexicale reconnue
-
+    public static int NB_CONST_CHAINE;
+    public static ArrayList<String> VAL_DE_CONST_CHAINE = new ArrayList<>();
+    public static int DERNIERE_ADRESSE_VAR_GLOB;
 
     static AnalyseurLexical analyseurLexical = new AnalyseurLexical();
     static AnalyseurSyntaxique analyseurSyntaxique = new AnalyseurSyntaxique();
 
     static public TableIdentificateur tableIdentificateur = new TableIdentificateur();
 
-    public TableIdentificateur getTableIdentificateur(){
+    static public TableIdentificateur getTableIdentificateur(){
         return tableIdentificateur;
     }
 
@@ -37,10 +40,13 @@ public class Compilateur {
     }
 
     public void initialiser() throws FileNotFoundException {
+        NB_CONST_CHAINE = 0;
+        DERNIERE_ADRESSE_VAR_GLOB = -1;
         analyseurLexical.initialiser();
     }
 
     public void terminer() throws IOException {
+
         analyseurLexical.terminer();
     }
 
@@ -53,19 +59,18 @@ public class Compilateur {
 
     public static void main(String args[]) throws IOException {
 
-        String path = "testLexical.txt";
+        String path = "testSemantique";
 
         Compilateur compilateur = new Compilateur(path);
         compilateur.initialiser();
         //compilateur.printTableMotsReserves();
 
-        //compilateur.analyseurSyntaxique.anasynt();
+        compilateur.analyseurSyntaxique.anasynt();
 
-        compilateur.analyseurLexical.boucleTest();
+        //compilateur.analyseurLexical.boucleTest();
 
 
         compilateur.terminer();
-        //compilateur.getTableIdentificateur().affiche_table_ident();
 
     }
 }
