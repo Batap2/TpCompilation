@@ -43,11 +43,6 @@ public class AnalyseurLexical {
     // boolean disant si on lit un caractère au sein d'une fonction. True = on ne le lit pas dans une fonction
     private boolean lectureSeule;
 
-    // Gère les erreurs
-    public void erreur(int numErr){
-        GestionErreur.erreur(numErr);
-    }
-
     // Ajoute les mots réservés dans le tableau des mots réservés
     public void initialiser() throws FileNotFoundException {
         Compilateur.num_ligne = 1;
@@ -97,7 +92,7 @@ public class AnalyseurLexical {
         Compilateur.carlu = (char)file.read();
 
         if(Compilateur.carlu == asciiEOF && lectureSeule){
-            erreur(1);
+            GestionErreur.erreur(1, "");
         }
 
         if(Compilateur.carlu == asciiLineFeed){
@@ -142,7 +137,7 @@ public class AnalyseurLexical {
         returnToPreviousChar();
 
         if(Integer.parseInt(newNombre.toString()) > MAXINT){
-            erreur(2);
+            GestionErreur.erreur(2, "Nombre trop grand");
             return null;
         }
 
@@ -158,7 +153,7 @@ public class AnalyseurLexical {
 
         while (true){
             if(Compilateur.carlu == asciiEOF){
-                GestionErreur.erreur(2);
+                GestionErreur.erreur(2, "");
                 return null;
             }
 
@@ -173,7 +168,7 @@ public class AnalyseurLexical {
         }
 
         if(stringBuilder.toString().length() > Compilateur.LONG_MAX_CHAINE){
-            GestionErreur.erreur(2);
+            GestionErreur.erreur(2, "Chaine de caracteres trop longue");
             return null;
         }
 

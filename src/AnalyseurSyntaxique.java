@@ -4,6 +4,7 @@ public class AnalyseurSyntaxique {
 
     //private AnalyseurLexical analyseurLexical = new AnalyseurLexical();
     private AnalyseurSemantique analyseurSemantique = new AnalyseurSemantique();
+    private String messageErreur;
 
     public void anasynt() throws IOException {
         Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
@@ -12,9 +13,10 @@ public class AnalyseurSyntaxique {
             Compilateur.getTableIdentificateur().affiche_table_ident();
         }
         else{
-            GestionErreur.erreur(3);
+            GestionErreur.erreur(3, messageErreur);
         }
     }
+
 
     // prog -> 'programme' 'ident' ';' [decl_const][decl_var] bloc '.'
     public boolean prog() throws IOException {
@@ -32,28 +34,26 @@ public class AnalyseurSyntaxique {
                             return true;
                         }
                         else{
-                            System.out.println(". attendu");
-                            return false; // . attendu
+                            messageErreur = ". attendu";
+                            return false;
                         }
                     }
                     else{
-                        System.out.println("bloc incorrect");
                         return false; //bloc incorrect
                     }
                 }
                 else{
-                    System.out.println("; attendu");
+                    messageErreur = "; attendu";
                     return false; // ; attendu
                 }
             }
             else{
-                System.out.println("ident attendu");
+                messageErreur = "ident attendu";
                 return false; // ident attendu
             }
         }
         else{
-            System.out.println("mot clé programme attendu");
-            System.out.println(Compilateur.chaine);
+            messageErreur = "mot clé PROGRAMME attendu";
             return false; // mot clé programme attendu
         }
 
@@ -98,22 +98,26 @@ public class AnalyseurSyntaxique {
                                                 }
                                                 else{
                                                     fin = true;
+                                                    GestionErreur.erreur(4, "identificateur déjà déclaré");
                                                 }
 
                                             }
                                             else{
                                                 fin = true;
                                                 erreur = true; //entier ou chaine de caractères attendu
+                                                messageErreur = "entier ou chaine de caractères attendu";
                                             }
                                         }
                                         else{
                                             fin = true;
                                             erreur = true; //= attendu
+                                            messageErreur = "= attendu";
                                         }
                                     }
                                     else{
                                         fin = true;
                                         erreur = true; //identifiant attendu
+                                        messageErreur = "identifiant attendu";
                                     }
                                 }
                                 else{
@@ -128,28 +132,33 @@ public class AnalyseurSyntaxique {
                                 return true;
                             }
                             else{
+                                messageErreur = "; attendu";
                                 return false; // ; attendu
                             }
                         }
                         else{
-                            //todo : erreur semantique
+                            GestionErreur.erreur(4, "identifiant déjà déclaré");
                             return false; //erreur sémantique dans la déclaration des constantes, ident déjà déclaré
                         }
 
                     }
                     else{
+                        messageErreur = "entier ou chaine de caractères attendu attendu";
                         return false; //entier ou chaine de caracteres attendu
                     }
                 }
                 else{
+                    messageErreur = "= attendu";
                     return false; // = attendu
                 }
             }
             else{
+                messageErreur = "identifiant attendu";
                 return false; //identifiant attendu
             }
         }
         else{
+            messageErreur = "mot clé CONST attendu";
             return false; // mot clé const attendu
         }
 
@@ -181,6 +190,7 @@ public class AnalyseurSyntaxique {
                                 }
                                 else{
                                     fin = true;
+                                    GestionErreur.erreur(4, "identifiant déjà déclaré");
                                 }
 
                             }
@@ -194,6 +204,7 @@ public class AnalyseurSyntaxique {
                         }
                     }
                     if(erreur){
+                        messageErreur = "identifiant attendu";
                         return false; //identifiant attendu
                     }
                     else if(Compilateur.UNILEX == Compilateur.T_UNILEX.ptvirg){
@@ -201,19 +212,23 @@ public class AnalyseurSyntaxique {
                         return true;
                     }
                     else{
+                        messageErreur = "; attendu";
                         return false; // ; attendu
                     }
                 }
                 else{
+                    GestionErreur.erreur(4, "identifiant déjà déclaré");
                     return false; //erreur sémantique dans la déclaration des variables : identificateur déjà déclaré
                 }
 
             }
             else{
+                messageErreur = "identifiant attendu";
                 return false; //identifiant attendu
             }
         }
         else{
+            messageErreur = "mot clé VAR attendu";
             return false; // mot clé var attendu
         }
 
@@ -248,7 +263,7 @@ public class AnalyseurSyntaxique {
                     return true;
                 }
                 else{
-                    System.out.println("mot cle fin attendu");
+                    messageErreur = "mot clé FIN attendu";
                     return false; //mot clé fin attendu
                 }
             }
@@ -257,6 +272,7 @@ public class AnalyseurSyntaxique {
             }
         }
         else{
+            messageErreur = "mot clé DEBUT attendu";
             return false; //mot clé debut attendu
         }
 
@@ -276,10 +292,12 @@ public class AnalyseurSyntaxique {
     private boolean isDeclaredVariable(){
         int indice = Compilateur.tableIdentificateur.chercher(Compilateur.chaine);
         if(indice == -1){
+            GestionErreur.erreur(4, "identifiant pas déclaré");
             return false; //erreur semantique : ident pas déclaré
         }
         else{
             if(Compilateur.tableIdentificateur.enregIdents.get(indice).getGenre() != EnregIdent.GENRE.variable){
+                GestionErreur.erreur(4, "l'identifiant n'est pas une variable");
                 return false; //pas une variable
             }
         }
@@ -300,10 +318,12 @@ public class AnalyseurSyntaxique {
                 return exp();
             }
             else{
+                messageErreur = ":= attendu";
                 return false; //affectation attendue
             }
         }
         else{
+            messageErreur = "identificateur attendu";
             return false; //identificateur attendu
         }
 
@@ -347,6 +367,7 @@ public class AnalyseurSyntaxique {
                         }
                     }
                     if(erreur){
+                        messageErreur = "identificateur attendu";
                         return false; //identificateur attendu
                     }
                     else if(Compilateur.UNILEX == Compilateur.T_UNILEX.parfer){
@@ -354,18 +375,22 @@ public class AnalyseurSyntaxique {
                         return true;
                     }
                     else{
+                        messageErreur = ") attendu";
                         return false; // ) attendu
                     }
                 }
                 else{
+                    messageErreur = "identificateur attendu";
                     return false; // identificateur attendu
                 }
             }
             else{
+                messageErreur = "( attendu";
                 return false; // ( attendu
             }
         }
         else{
+            messageErreur = "mot clé LIRE attendu";
             return false; // mot clé lire attendu
         }
 
@@ -403,14 +428,17 @@ public class AnalyseurSyntaxique {
                     return true;
                 }
                 else{
+                    messageErreur = ") attendu";
                     return false; // ) attendu
                 }
             }
             else{
+                messageErreur = "( attendu";
                 return false; // ( attendu
             }
         }
         else{
+            messageErreur = "mot clé ECRIRE attendu";
             return false; //mot clé ECRIRE attendu
         }
 
@@ -425,6 +453,7 @@ public class AnalyseurSyntaxique {
                 return true;
             }
             else{
+                messageErreur = "chaine de caracteres attendu";
                 return false;
             }
         }
@@ -470,10 +499,12 @@ public class AnalyseurSyntaxique {
         if(Compilateur.UNILEX == Compilateur.T_UNILEX.ident){
             int indice = Compilateur.tableIdentificateur.chercher(Compilateur.chaine);
             if(indice == -1){
+                GestionErreur.erreur(4, "identifiant pas déclaré");
                 return false; //ident pas déclaré
             }
             else{
                 if(Compilateur.tableIdentificateur.enregIdents.get(indice).getType() != EnregIdent.TYPE.entier){
+                    GestionErreur.erreur(4, "l'identifiant n'est pas un entier");
                     return false;
                 }
             }
@@ -491,6 +522,7 @@ public class AnalyseurSyntaxique {
                     return true;
                 }
                 else{
+                    messageErreur = ") attendu";
                     return false; // ) attendue
                 }
             }
@@ -521,6 +553,7 @@ public class AnalyseurSyntaxique {
             return true;
         }
         else{
+            messageErreur = "+, -, * ou / attendu";
             return false;
         }
 
