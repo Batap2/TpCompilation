@@ -33,6 +33,8 @@ public class EnregIdent {
         return type;
     }
 
+    public int getAdresse(){return adresse;}
+
     @Override
     public String toString(){
         StringBuilder builder = new StringBuilder();

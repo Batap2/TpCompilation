@@ -4,6 +4,8 @@ public class AnalyseurSyntaxique {
 
     //private AnalyseurLexical analyseurLexical = new AnalyseurLexical();
     private AnalyseurSemantique analyseurSemantique = new AnalyseurSemantique();
+    //todo : enlever memoire ici
+    private Memoire memoire;
     private String messageErreur;
 
     public void anasynt() throws IOException {
@@ -240,6 +242,9 @@ public class AnalyseurSyntaxique {
 
         if(Compilateur.UNILEX == Compilateur.T_UNILEX.motcle && Compilateur.chaine.equals("DEBUT")){
             Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+
+            memoire = new Memoire();
+
             if(instruction()){
                 fin = false;
                 erreur = false;
@@ -312,10 +317,16 @@ public class AnalyseurSyntaxique {
                 return false;
             }
 
+            Compilateur.analyseurLexical.GENCODE_empilement();
+
             Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
             if(Compilateur.UNILEX == Compilateur.T_UNILEX.aff){
                 Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
-                return exp();
+                boolean retour = exp();
+
+                Compilateur.analyseurLexical.GENCODE_affectation();
+
+                return retour;
             }
             else{
                 messageErreur = ":= attendu";
@@ -343,6 +354,9 @@ public class AnalyseurSyntaxique {
                         return false;
                     }
 
+                    Compilateur.analyseurLexical.GENCODE_empilement();
+                    Compilateur.analyseurLexical.GENCODE_lecture();
+
                     Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
                     fin = false;
                     erreur = false;
@@ -354,6 +368,9 @@ public class AnalyseurSyntaxique {
                                 if(!isDeclaredVariable()){
                                     return false;
                                 }
+
+                                Compilateur.analyseurLexical.GENCODE_empilement();
+                                Compilateur.analyseurLexical.GENCODE_lecture();
 
                                 Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
                             }
@@ -420,6 +437,9 @@ public class AnalyseurSyntaxique {
                         }
                     }
                 }
+                else{
+                    Compilateur.analyseurLexical.GENCODE_ecriture();
+                }
                 if(erreur){
                     return false; //Expression incorrecte
                 }
@@ -449,6 +469,9 @@ public class AnalyseurSyntaxique {
 
         if(!exp()){
             if(Compilateur.UNILEX == Compilateur.T_UNILEX.ch){
+
+                Compilateur.analyseurLexical.GENCODE_ecr_exp_ch();
+
                 Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
                 return true;
             }
@@ -458,6 +481,7 @@ public class AnalyseurSyntaxique {
             }
         }
         else{
+            Compilateur.analyseurLexical.GENCODE_ecr_exp();
             return true;
         }
 

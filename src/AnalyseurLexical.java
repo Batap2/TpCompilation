@@ -43,6 +43,8 @@ public class AnalyseurLexical {
     // boolean disant si on lit un caractère au sein d'une fonction. True = on ne le lit pas dans une fonction
     private boolean lectureSeule;
 
+    private Memoire memoire;
+
     // Ajoute les mots réservés dans le tableau des mots réservés
     public void initialiser() throws FileNotFoundException {
         Compilateur.num_ligne = 1;
@@ -390,4 +392,47 @@ public class AnalyseurLexical {
                 car == asciiLessThan | car == asciiGreaterThan | car == asciiEquals |
                 car == asciiPlus | car == asciiHyphen | car == asciiAsterisk | car == asciiSlash;
     }
+
+    public void GENCODE_empilement(){
+        int CO = memoire.getCO();
+        memoire.setP_CODE(CO, Memoire.MOT_MEMOIRE.EMPI.ordinal());
+        memoire.setP_CODE(CO+1, Compilateur.tableIdentificateur.getEnregIdent(Compilateur.chaine).getAdresse());
+        memoire.setCO(2);
+    }
+
+    public void GENCODE_affectation(){
+        int CO = memoire.getCO();
+        memoire.setP_CODE(CO, Memoire.MOT_MEMOIRE.AFFE.ordinal());
+        memoire.setCO(1);
+    }
+
+    public void GENCODE_lecture(){
+        int CO = memoire.getCO();
+        memoire.setP_CODE(CO, Memoire.MOT_MEMOIRE.LIRE.ordinal());
+        memoire.setCO(1);
+    }
+
+    public void GENCODE_ecriture(){
+        int CO = memoire.getCO();
+        memoire.setP_CODE(CO, Memoire.MOT_MEMOIRE.ECRL.ordinal());
+        memoire.setCO(1);
+    }
+
+    public void GENCODE_ecr_exp(){
+        int CO = memoire.getCO();
+        memoire.setP_CODE(CO, Memoire.MOT_MEMOIRE.ECRE.ordinal());
+        memoire.setCO(1);
+    }
+
+    public void GENCODE_ecr_exp_ch(){
+        int CO = memoire.getCO();
+        memoire.setP_CODE(CO, Memoire.MOT_MEMOIRE.ECRC.ordinal());
+        for(int i = 0; i<Compilateur.chaine.length(); i++ ){
+            memoire.setP_CODE(CO+i+1, Compilateur.chaine.charAt(i));
+        }
+        memoire.setP_CODE(CO+Compilateur.chaine.length()+1, Memoire.MOT_MEMOIRE.FINC.ordinal());
+        memoire.setCO(Compilateur.chaine.length()+2);
+    }
+
+
 }

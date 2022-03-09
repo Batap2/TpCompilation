@@ -14,6 +14,15 @@ public class TableIdentificateur {
             }
         }
         return INDEX_NO_FOUND;
+
+    }
+
+    public EnregIdent getEnregIdent(String name){
+        int indice = chercher(name);
+        if(indice != INDEX_NO_FOUND){
+           return enregIdents.get(indice);
+        }
+        return null;
     }
 
     public int inserer(EnregIdent enregIdent){

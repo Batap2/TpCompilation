@@ -59,7 +59,7 @@ public class Compilateur {
 
     public static void main(String args[]) throws IOException {
 
-        String path = "testSemantiqueErreurTerme";
+        String path = "testSemantique";
 
         Compilateur compilateur = new Compilateur(path);
         compilateur.initialiser();
