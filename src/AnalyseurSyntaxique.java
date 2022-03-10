@@ -4,8 +4,6 @@ public class AnalyseurSyntaxique {
 
     //private AnalyseurLexical analyseurLexical = new AnalyseurLexical();
     private AnalyseurSemantique analyseurSemantique = new AnalyseurSemantique();
-    //todo : enlever memoire ici
-    private Memoire memoire;
     private String messageErreur;
 
     public void anasynt() throws IOException {
@@ -243,7 +241,7 @@ public class AnalyseurSyntaxique {
         if(Compilateur.UNILEX == Compilateur.T_UNILEX.motcle && Compilateur.chaine.equals("DEBUT")){
             Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
 
-            memoire = new Memoire();
+            Compilateur.analyseurLexical.initMemoire();
 
             if(instruction()){
                 fin = false;
@@ -264,6 +262,7 @@ public class AnalyseurSyntaxique {
                     return false; //instruction invalide
                 }
                 else if(Compilateur.UNILEX == Compilateur.T_UNILEX.motcle && Compilateur.chaine.equals("FIN")){
+                    Compilateur.analyseurLexical.GENCODE_stop();
                     Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
                     return true;
                 }
@@ -501,6 +500,7 @@ public class AnalyseurSyntaxique {
     public boolean suite_terme() throws IOException {
         if(op_bin()){
             if(exp()){
+                Compilateur.analyseurLexical.GENCODE_suiteTerme();
                 return true;
             }
             else{
@@ -516,6 +516,9 @@ public class AnalyseurSyntaxique {
     public boolean terme() throws IOException {
 
         if(Compilateur.UNILEX == Compilateur.T_UNILEX.ent){
+
+            Compilateur.analyseurLexical.GENCODE_terme_ent();
+
             Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
             return true;
         }
@@ -532,6 +535,8 @@ public class AnalyseurSyntaxique {
                     return false;
                 }
             }
+
+            Compilateur.analyseurLexical.GENCODE_terme_ident();
 
             Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
             return true;
@@ -560,6 +565,7 @@ public class AnalyseurSyntaxique {
                 return false;
             }
             else{
+                Compilateur.analyseurLexical.GENCODE_terme_moins();
                 return true;
             }
         }
@@ -569,10 +575,23 @@ public class AnalyseurSyntaxique {
 
     // op_bin -> '+' | '-' | '*' | '/'
     public boolean op_bin() throws IOException {
-        if(Compilateur.UNILEX == Compilateur.T_UNILEX.plus ||
-        Compilateur.UNILEX == Compilateur.T_UNILEX.moins ||
-        Compilateur.UNILEX == Compilateur.T_UNILEX.mult ||
-        Compilateur.UNILEX == Compilateur.T_UNILEX.divi){
+        if(Compilateur.UNILEX == Compilateur.T_UNILEX.plus){
+            Compilateur.analyseurLexical.GENCODE_opbin(Memoire.MOT_MEMOIRE.ADDI);
+            Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+            return true;
+        }
+        else if(Compilateur.UNILEX == Compilateur.T_UNILEX.moins){
+            Compilateur.analyseurLexical.GENCODE_opbin(Memoire.MOT_MEMOIRE.MOIN);
+            Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+            return true;
+        }
+        else if(Compilateur.UNILEX == Compilateur.T_UNILEX.mult){
+            Compilateur.analyseurLexical.GENCODE_opbin(Memoire.MOT_MEMOIRE.MULT);
+            Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+            return true;
+        }
+        else if(Compilateur.UNILEX == Compilateur.T_UNILEX.divi){
+            Compilateur.analyseurLexical.GENCODE_opbin(Memoire.MOT_MEMOIRE.DIVI);
             Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
             return true;
         }

@@ -9,18 +9,45 @@ public class Memoire {
     private int indiceDebutPILEX = ((taille - indiceDebutP_CODE)/2) + indiceDebutP_CODE;
     private int CO = indiceDebutP_CODE;
 
+    private int[] PILOP = new int[taille/4];
+    private int som_pilop = -1;
+
     public enum MOT_MEMOIRE{ADDI, SOUS, MULT, DIVI, MOIN, AFFE, LIRE, ECRL, ECRE, ECRC, FINC, EMPI, CONT, STOP};
+
+    public int getNbMotsReservesVariableGlobales(){
+        return indiceDebutP_CODE;
+    }
 
     public void setCO(int saut){
         CO = CO+saut;
+    }
+
+    public void setSom_pilop(int saut){
+        som_pilop = som_pilop + saut;
     }
 
     public int getCO(){
         return CO;
     }
 
+    public int getSom_pilop(){
+        return som_pilop;
+    }
+
+    public int getContenuP_CODE(int indice){
+        return memoireCentrale[indice];
+    }
+
+    public int getContenuPILOP(int indice){
+        return PILOP[indice];
+    }
+
     public void setP_CODE(int indice, int value){
         memoireCentrale[indice] = value;
+    }
+
+    public void setPILOP(int indice, int value){
+        PILOP[indice] = value;
     }
 
 

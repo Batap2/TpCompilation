@@ -1,4 +1,5 @@
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -432,6 +433,65 @@ public class AnalyseurLexical {
         }
         memoire.setP_CODE(CO+Compilateur.chaine.length()+1, Memoire.MOT_MEMOIRE.FINC.ordinal());
         memoire.setCO(Compilateur.chaine.length()+2);
+    }
+
+    public void GENCODE_terme_ent(){
+        int CO = memoire.getCO();
+        memoire.setP_CODE(CO, Memoire.MOT_MEMOIRE.EMPI.ordinal());
+        memoire.setP_CODE(CO+1, Compilateur.nombre);
+        memoire.setCO(2);
+    }
+
+    public void GENCODE_terme_ident(){
+        int CO = memoire.getCO();
+        memoire.setP_CODE(CO, Memoire.MOT_MEMOIRE.EMPI.ordinal());
+        memoire.setP_CODE(CO+1, Compilateur.tableIdentificateur.getEnregIdent(Compilateur.chaine).getAdresse());
+        memoire.setP_CODE(CO+2, Memoire.MOT_MEMOIRE.CONT.ordinal());
+        memoire.setCO(3);
+
+    }
+
+    public void GENCODE_terme_moins(){
+        int CO = memoire.getCO();
+        memoire.setP_CODE(CO, Memoire.MOT_MEMOIRE.MOIN.ordinal());
+        memoire.setCO(1);
+    }
+
+    public void GENCODE_opbin(Memoire.MOT_MEMOIRE mot_memoire){
+        memoire.setSom_pilop(1);
+        int sommet = memoire.getSom_pilop();
+        memoire.setPILOP(sommet,mot_memoire.ordinal());
+    }
+
+    public void GENCODE_suiteTerme(){
+        int CO = memoire.getCO();
+        int sommet = memoire.getSom_pilop();
+        memoire.setP_CODE(CO,memoire.getContenuPILOP(sommet));
+        memoire.setSom_pilop(-1);
+        memoire.setCO(1);
+    }
+
+    public void GENCODE_stop(){
+        int CO = memoire.getCO();
+        memoire.setP_CODE(CO, Memoire.MOT_MEMOIRE.STOP.ordinal());
+        memoire.setCO(1);
+    }
+
+    public void initMemoire(){
+        memoire = new Memoire();
+    }
+
+    public void creer_fichier_code(String nomSource) throws IOException {
+//todo : en faire un .cod ?
+        FileWriter file = new FileWriter(nomSource+".txt");
+        int premiereAdresseLibre = memoire.getNbMotsReservesVariableGlobales();
+        file.append(premiereAdresseLibre+" mot(s) réservé(s) pour les variables globales");
+        int adresse = premiereAdresseLibre;
+        while(adresse != memoire.getCO()){
+
+            
+
+        }
     }
 
 
