@@ -11,11 +11,36 @@ public class Memoire {
 
     private int[] PILOP = new int[taille/4];
     private int som_pilop = -1;
+    private int som_pilex = indiceDebutPILEX-1;
 
     public enum MOT_MEMOIRE{ADDI, SOUS, MULT, DIVI, MOIN, AFFE, LIRE, ECRL, ECRE, ECRC, FINC, EMPI, CONT, STOP};
 
+    public void setMemvar(int indice, int value){
+        memoireCentrale[indice] = value;
+    }
+
+    public int getMemvar(int indice){
+        return memoireCentrale[indice];
+    }
+
     public int getNbMotsReservesVariableGlobales(){
         return indiceDebutP_CODE;
+    }
+
+    public void setPilex(int indice, int value){
+        memoireCentrale[indice] = value;
+    }
+
+    public int getSom_pilex(){
+        return som_pilex;
+    }
+
+    public int getContenuPilex(int indice){
+        return memoireCentrale[indice];
+    }
+
+    public void setSom_pilex(int saut){
+        som_pilex = som_pilex+saut;
     }
 
     public void setCO(int saut){
@@ -50,5 +75,10 @@ public class Memoire {
         PILOP[indice] = value;
     }
 
+    public void print(){
+        for(int i=0; i<taille;i++){
+            System.out.println(i+": "+memoireCentrale[i]);
+        }
+    }
 
 }

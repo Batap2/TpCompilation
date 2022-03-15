@@ -1,7 +1,9 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Compilateur {
 
@@ -30,6 +32,9 @@ public class Compilateur {
 
     static public TableIdentificateur tableIdentificateur = new TableIdentificateur();
 
+    static Memoire memoire;
+    private static final String SEPARATOR = "\n";
+
     static public TableIdentificateur getTableIdentificateur(){
         return tableIdentificateur;
     }
@@ -56,10 +61,169 @@ public class Compilateur {
         }
     }
 
+    static public void creer_fichier_code(String nomSource) throws IOException {
+        //memoire.print();
+
+        FileWriter file = new FileWriter(nomSource+".COD");
+        int premiereAdresseLibre = memoire.getNbMotsReservesVariableGlobales();
+        file.append(premiereAdresseLibre+" mot(s) réservé(s) pour les variables globales"+SEPARATOR);
+        int adresse = premiereAdresseLibre;
+        while(adresse != memoire.getCO()){
+
+            if(memoire.getContenuP_CODE(adresse) == Memoire.MOT_MEMOIRE.ADDI.ordinal()){
+                file.append("ADDI"+SEPARATOR);
+            }
+            else if(memoire.getContenuP_CODE(adresse) == Memoire.MOT_MEMOIRE.SOUS.ordinal()){
+                file.append("SOUS"+SEPARATOR);
+            }
+            else if(memoire.getContenuP_CODE(adresse) == Memoire.MOT_MEMOIRE.MULT.ordinal()){
+                file.append("MULT"+SEPARATOR);
+            }
+            else if(memoire.getContenuP_CODE(adresse) == Memoire.MOT_MEMOIRE.DIVI.ordinal()){
+                file.append("DIVI"+SEPARATOR);
+            }
+            else if(memoire.getContenuP_CODE(adresse) == Memoire.MOT_MEMOIRE.MOIN.ordinal()){
+                file.append("MOIN"+SEPARATOR);
+            }
+            else if(memoire.getContenuP_CODE(adresse) == Memoire.MOT_MEMOIRE.AFFE.ordinal()){
+                file.append("AFFE"+SEPARATOR);
+            }
+            else if(memoire.getContenuP_CODE(adresse) == Memoire.MOT_MEMOIRE.LIRE.ordinal()){
+                file.append("LIRE"+SEPARATOR);
+            }
+            else if(memoire.getContenuP_CODE(adresse) == Memoire.MOT_MEMOIRE.ECRL.ordinal()){
+                file.append("ECRL"+SEPARATOR);
+            }
+            else if(memoire.getContenuP_CODE(adresse) == Memoire.MOT_MEMOIRE.ECRE.ordinal()){
+                file.append("ECRE"+SEPARATOR);
+            }
+            else if(memoire.getContenuP_CODE(adresse) == Memoire.MOT_MEMOIRE.ECRC.ordinal()){
+                file.append("ECRC '");
+                adresse++;
+                while(memoire.getContenuP_CODE(adresse) != Memoire.MOT_MEMOIRE.FINC.ordinal()){
+                    file.append(Character.toString(memoire.getContenuP_CODE(adresse)));
+                    adresse++;
+                }
+                file.append("' FINC"+SEPARATOR);
+            }
+            else if(memoire.getContenuP_CODE(adresse) == Memoire.MOT_MEMOIRE.EMPI.ordinal()){
+                file.append("EMPI ");
+                adresse++;
+                file.append(Integer.toString(memoire.getContenuP_CODE(adresse))+SEPARATOR);
+            }
+            else if(memoire.getContenuP_CODE(adresse) == Memoire.MOT_MEMOIRE.CONT.ordinal()){
+                file.append("CONT"+SEPARATOR);
+            }
+            else if(memoire.getContenuP_CODE(adresse) == Memoire.MOT_MEMOIRE.STOP.ordinal()){
+                file.append("STOP"+SEPARATOR);
+            }
+            else{
+                GestionErreur.erreur(0);
+            }
+            adresse++;
+        }
+        file.close();
+    }
+
+    private void traitementInstructionArithmetique(String operation){
+        int value = memoire.getContenuPilex(memoire.getSom_pilex()-1);
+        if(operation.equals("+")){
+            value = value +memoire.getContenuPilex(memoire.getSom_pilex());
+        }
+        if(operation.equals("-")){
+            value = value - memoire.getContenuPilex(memoire.getSom_pilex());
+        }
+        if(operation.equals("*")){
+            value = value * memoire.getContenuPilex(memoire.getSom_pilex());
+        }
+        if(operation.equals("/")){
+            value = value / memoire.getContenuPilex(memoire.getSom_pilex());
+        }
+        memoire.setPilex(memoire.getSom_pilex()-1, value);
+        memoire.setSom_pilex(-1);
+    }
+
+    public void interpreter(){
+
+        int CO = memoire.getNbMotsReservesVariableGlobales();
+        while(memoire.getContenuP_CODE(CO) != Memoire.MOT_MEMOIRE.STOP.ordinal()){
+
+            if(memoire.getContenuP_CODE(CO) == Memoire.MOT_MEMOIRE.ADDI.ordinal()){
+                traitementInstructionArithmetique("+");
+                CO++;
+            }
+            else if(memoire.getContenuP_CODE(CO) == Memoire.MOT_MEMOIRE.SOUS.ordinal()){
+                traitementInstructionArithmetique("-");
+                CO++;
+            }
+            else if(memoire.getContenuP_CODE(CO) == Memoire.MOT_MEMOIRE.MULT.ordinal()){
+                traitementInstructionArithmetique("*");
+                CO++;
+            }
+            else if(memoire.getContenuP_CODE(CO) == Memoire.MOT_MEMOIRE.DIVI.ordinal()){
+                if(memoire.getContenuPilex(memoire.getSom_pilex()) == 0){
+                    GestionErreur.erreur(6, "division par zéro");
+                }
+                else{
+                    traitementInstructionArithmetique("/");
+                    CO++;
+                }
+            }
+            else if(memoire.getContenuP_CODE(CO) == Memoire.MOT_MEMOIRE.MOIN.ordinal()){
+                memoire.setPilex(memoire.getSom_pilex(), - memoire.getSom_pilex());
+                CO++;
+            }
+            else if(memoire.getContenuP_CODE(CO) == Memoire.MOT_MEMOIRE.AFFE.ordinal()){
+                memoire.setMemvar(memoire.getContenuPilex(memoire.getSom_pilex()-1), memoire.getContenuPilex(memoire.getSom_pilex()));
+                memoire.setSom_pilex(-2);
+                CO++;
+            }
+            else if(memoire.getContenuP_CODE(CO) == Memoire.MOT_MEMOIRE.LIRE.ordinal()){
+                Scanner scanner = new Scanner(System.in);
+                memoire.setMemvar(memoire.getContenuPilex(memoire.getSom_pilex()), scanner.nextInt());
+                scanner.close();
+                memoire.setSom_pilex(-1);
+                CO++;
+            }
+            else if(memoire.getContenuP_CODE(CO) == Memoire.MOT_MEMOIRE.ECRL.ordinal()){
+                System.out.println();
+                CO++;
+            }
+            else if(memoire.getContenuP_CODE(CO) == Memoire.MOT_MEMOIRE.ECRE.ordinal()){
+                System.out.println(memoire.getContenuPilex(memoire.getSom_pilex()));
+                memoire.setSom_pilex(-1);
+                CO++;
+            }
+            else if(memoire.getContenuP_CODE(CO) == Memoire.MOT_MEMOIRE.ECRC.ordinal()){
+                CO++;
+                String ch = Character.toString(memoire.getContenuP_CODE(CO));
+                while(memoire.getContenuP_CODE(CO) != Memoire.MOT_MEMOIRE.FINC.ordinal()){
+                    CO++;
+                    ch = ch+Character.toString(memoire.getContenuP_CODE(CO));
+                }
+                System.out.println(ch);
+                CO++;
+            }
+            else if(memoire.getContenuP_CODE(CO) == Memoire.MOT_MEMOIRE.EMPI.ordinal()){
+                memoire.setSom_pilex(1);
+                memoire.setPilex(memoire.getSom_pilex(), memoire.getContenuP_CODE(CO+1));
+                CO = CO+2;
+            }
+            else if(memoire.getContenuP_CODE(CO) == Memoire.MOT_MEMOIRE.CONT.ordinal()){
+                memoire.setPilex(memoire.getSom_pilex(), memoire.getMemvar(memoire.getContenuPilex(memoire.getSom_pilex())));
+                CO++;
+            }
+            else{
+                GestionErreur.erreur(0);
+            }
+        }
+
+    }
+
 
     public static void main(String args[]) throws IOException {
 
-        String path = "testSemantique";
+        String path = "testGencode";
 
         Compilateur compilateur = new Compilateur(path);
         compilateur.initialiser();
@@ -71,6 +235,9 @@ public class Compilateur {
 
 
         compilateur.terminer();
+
+        creer_fichier_code(path);
+        compilateur.interpreter();
 
     }
 }

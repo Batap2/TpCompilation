@@ -44,7 +44,8 @@ public class AnalyseurLexical {
     // boolean disant si on lit un caractère au sein d'une fonction. True = on ne le lit pas dans une fonction
     private boolean lectureSeule;
 
-    private Memoire memoire;
+    private Memoire memoire = Compilateur.memoire;
+
 
     // Ajoute les mots réservés dans le tableau des mots réservés
     public void initialiser() throws FileNotFoundException {
@@ -475,24 +476,14 @@ public class AnalyseurLexical {
         int CO = memoire.getCO();
         memoire.setP_CODE(CO, Memoire.MOT_MEMOIRE.STOP.ordinal());
         memoire.setCO(1);
+        Compilateur.memoire = memoire;
     }
 
     public void initMemoire(){
         memoire = new Memoire();
     }
 
-    public void creer_fichier_code(String nomSource) throws IOException {
-//todo : en faire un .cod ?
-        FileWriter file = new FileWriter(nomSource+".txt");
-        int premiereAdresseLibre = memoire.getNbMotsReservesVariableGlobales();
-        file.append(premiereAdresseLibre+" mot(s) réservé(s) pour les variables globales");
-        int adresse = premiereAdresseLibre;
-        while(adresse != memoire.getCO()){
 
-            
-
-        }
-    }
 
 
 }

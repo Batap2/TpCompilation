@@ -7,7 +7,8 @@ public class GestionErreur {
             "Fin de fichier atteinte",
             "Erreur lexicale",
             "Erreur syntaxique",
-            "Erreur sémantique"
+            "Erreur sémantique",
+            "Erreur d'exécution"
     };
 
     public static void erreur(int numErr){

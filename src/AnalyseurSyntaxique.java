@@ -466,7 +466,25 @@ public class AnalyseurSyntaxique {
     // ecr_exp -> exp | 'ch'
     public boolean ecr_exp() throws IOException {
 
-        if(!exp()){
+        if(exp()){
+            Compilateur.analyseurLexical.GENCODE_ecr_exp();
+            return true;
+        }
+        else{
+            if(Compilateur.UNILEX == Compilateur.T_UNILEX.ch){
+
+                Compilateur.analyseurLexical.GENCODE_ecr_exp_ch();
+
+                Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+                return true;
+            }
+            else{
+                messageErreur = "chaine de caracteres attendu";
+                return false;
+            }
+        }
+
+        /*if(!exp()){
             if(Compilateur.UNILEX == Compilateur.T_UNILEX.ch){
 
                 Compilateur.analyseurLexical.GENCODE_ecr_exp_ch();
@@ -482,7 +500,7 @@ public class AnalyseurSyntaxique {
         else{
             Compilateur.analyseurLexical.GENCODE_ecr_exp();
             return true;
-        }
+        }*/
 
     }
 
