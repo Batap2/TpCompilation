@@ -58,6 +58,11 @@ public class AnalyseurLexical {
         insere_table_mots_reserves("VAR");
         insere_table_mots_reserves("ECRIRE");
         insere_table_mots_reserves("LIRE");
+        insere_table_mots_reserves("SI");
+        insere_table_mots_reserves("ALORS");
+        insere_table_mots_reserves("SINON");
+        insere_table_mots_reserves("TANTQUE");
+        insere_table_mots_reserves("FAIRE");
     }
 
     // Ajoute un mot dans le tableau des mots réservés en le classant dans l'ordre alphabéthique
@@ -477,6 +482,47 @@ public class AnalyseurLexical {
         memoire.setP_CODE(CO, Memoire.MOT_MEMOIRE.STOP.ordinal());
         memoire.setCO(1);
         Compilateur.memoire = memoire;
+    }
+
+    public void GENCODE_alsn(){
+        int CO = memoire.getCO();
+        memoire.setP_CODE(CO, Memoire.MOT_MEMOIRE.ALSN.ordinal());
+        memoire.setSom_pilop(1);
+        memoire.setPILOP(memoire.getSom_pilop(), CO+1);
+        memoire.setCO(2);
+    }
+
+    public void GENCODE_alle1(){
+
+        int CO = memoire.getCO();
+        memoire.setP_CODE(memoire.getContenuPILOP(memoire.getSom_pilop()), CO+2);
+        memoire.setSom_pilop(-1);
+        memoire.setP_CODE(CO, Memoire.MOT_MEMOIRE.ALLE.ordinal());
+        memoire.setSom_pilop(1);
+        memoire.setPILOP(memoire.getSom_pilop(), CO+1);
+        memoire.setCO(2);
+    }
+
+    public void GENCODE_alle2(){
+        int CO = memoire.getCO();
+        memoire.setP_CODE(memoire.getContenuPILOP(memoire.getSom_pilop()), CO+2);
+        memoire.setSom_pilop(-1);
+        memoire.setP_CODE(CO, Memoire.MOT_MEMOIRE.ALLE.ordinal());
+        memoire.setP_CODE(CO+1, memoire.getContenuPILOP(memoire.getSom_pilop()));
+        memoire.setSom_pilop(-1);
+        memoire.setCO(2);
+    }
+
+    public void GENCODE_3(){
+        int CO = memoire.getCO();
+        memoire.setP_CODE(memoire.getContenuPILOP(memoire.getSom_pilop()), CO);
+        memoire.setSom_pilop(-1);
+    }
+
+    public void GENCODE_4(){
+        memoire.setSom_pilop(1);
+        memoire.setPILOP(memoire.getSom_pilop(), memoire.getCO());
+        //memoire.setCO(1);
     }
 
     public void initMemoire(){

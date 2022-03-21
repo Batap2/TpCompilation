@@ -1,0 +1,14 @@
+programme exemple;
+var resultat;
+debut
+    resultat := 0;
+    Si resultat alors
+    debut
+        ecrire('le resultat est different de zero');
+        ecrire();
+        ecrire('il est egal a:', resultat)
+    fin
+    sinon
+        ecrire('le resultat est nul');
+    resultat := 5
+fin.

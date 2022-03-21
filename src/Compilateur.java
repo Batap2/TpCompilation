@@ -9,7 +9,7 @@ public class Compilateur {
 
     static final int LONG_MAX_IDENT = 20;
     static final int LONG_MAX_CHAINE = 50;
-    static final int NB_MOTS_RESERVES = 7;
+    static final int NB_MOTS_RESERVES = 12;
 
     public enum T_UNILEX{ motcle, ident, ent, ch, virg,
                           ptvirg, point, deuxpts, parouv,
@@ -62,7 +62,7 @@ public class Compilateur {
     }
 
     static public void creer_fichier_code(String nomSource) throws IOException {
-        //memoire.print();
+        memoire.print();
 
         FileWriter file = new FileWriter(nomSource+".COD");
         int premiereAdresseLibre = memoire.getNbMotsReservesVariableGlobales();
@@ -117,6 +117,16 @@ public class Compilateur {
             else if(memoire.getContenuP_CODE(adresse) == Memoire.MOT_MEMOIRE.STOP.ordinal()){
                 file.append("STOP"+SEPARATOR);
             }
+            else if(memoire.getContenuP_CODE(adresse) == Memoire.MOT_MEMOIRE.ALLE.ordinal()){
+                file.append("ALLE ");
+                adresse++;
+                file.append(memoire.getContenuP_CODE(adresse)+SEPARATOR);
+            }
+            else if(memoire.getContenuP_CODE(adresse) == Memoire.MOT_MEMOIRE.ALSN.ordinal()){
+                file.append("ALSN ");
+                adresse++;
+                file.append(memoire.getContenuP_CODE(adresse)+SEPARATOR);
+            }
             else{
                 GestionErreur.erreur(0);
             }
@@ -170,7 +180,7 @@ public class Compilateur {
                 }
             }
             else if(memoire.getContenuP_CODE(CO) == Memoire.MOT_MEMOIRE.MOIN.ordinal()){
-                memoire.setPilex(memoire.getSom_pilex(), - memoire.getSom_pilex());
+                memoire.setPilex(memoire.getSom_pilex(), - memoire.getContenuPilex(memoire.getSom_pilex()));
                 CO++;
             }
             else if(memoire.getContenuP_CODE(CO) == Memoire.MOT_MEMOIRE.AFFE.ordinal()){
@@ -186,11 +196,11 @@ public class Compilateur {
                 CO++;
             }
             else if(memoire.getContenuP_CODE(CO) == Memoire.MOT_MEMOIRE.ECRL.ordinal()){
-                System.out.println();
+                System.out.print("\n");
                 CO++;
             }
             else if(memoire.getContenuP_CODE(CO) == Memoire.MOT_MEMOIRE.ECRE.ordinal()){
-                System.out.println(memoire.getContenuPilex(memoire.getSom_pilex()));
+                System.out.print(memoire.getContenuPilex(memoire.getSom_pilex()));
                 memoire.setSom_pilex(-1);
                 CO++;
             }
@@ -201,7 +211,7 @@ public class Compilateur {
                     CO++;
                     ch = ch+Character.toString(memoire.getContenuP_CODE(CO));
                 }
-                System.out.println(ch);
+                System.out.print(ch);
                 CO++;
             }
             else if(memoire.getContenuP_CODE(CO) == Memoire.MOT_MEMOIRE.EMPI.ordinal()){
@@ -213,7 +223,22 @@ public class Compilateur {
                 memoire.setPilex(memoire.getSom_pilex(), memoire.getMemvar(memoire.getContenuPilex(memoire.getSom_pilex())));
                 CO++;
             }
+            else if(memoire.getContenuP_CODE(CO) == Memoire.MOT_MEMOIRE.ALSN.ordinal()){
+                if(memoire.getContenuPilex(memoire.getSom_pilex()) == 0){
+                    CO = memoire.getContenuP_CODE(CO+1);
+                    //memoire.setCO(memoire.getContenuP_CODE(CO+1) - CO);
+                }
+                else{
+                    //memoire.setCO(1);
+                    CO = CO+2;
+                }
+                memoire.setSom_pilex(-1);
+            }
+            else if(memoire.getContenuP_CODE(CO) == Memoire.MOT_MEMOIRE.ALLE.ordinal()){
+                CO = memoire.getContenuP_CODE(CO+1);
+            }
             else{
+                System.out.println("interpreteur");
                 GestionErreur.erreur(0);
             }
         }
@@ -223,7 +248,7 @@ public class Compilateur {
 
     public static void main(String args[]) throws IOException {
 
-        String path = "testGencode";
+        String path = "testSiSinon";
 
         Compilateur compilateur = new Compilateur(path);
         compilateur.initialiser();

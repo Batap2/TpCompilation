@@ -29,8 +29,10 @@ public class AnalyseurSyntaxique {
                     Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
                     decl_const();
                     decl_var();
+                    Compilateur.analyseurLexical.initMemoire();
                     if(bloc()){
                         if(Compilateur.UNILEX == Compilateur.T_UNILEX.point){
+                            Compilateur.analyseurLexical.GENCODE_stop();
                             return true;
                         }
                         else{
@@ -241,8 +243,6 @@ public class AnalyseurSyntaxique {
         if(Compilateur.UNILEX == Compilateur.T_UNILEX.motcle && Compilateur.chaine.equals("DEBUT")){
             Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
 
-            Compilateur.analyseurLexical.initMemoire();
-
             if(instruction()){
                 fin = false;
                 erreur = false;
@@ -259,10 +259,10 @@ public class AnalyseurSyntaxique {
                     }
                 }
                 if(erreur){
+                    messageErreur = "instruction invalide";
                     return false; //instruction invalide
                 }
                 else if(Compilateur.UNILEX == Compilateur.T_UNILEX.motcle && Compilateur.chaine.equals("FIN")){
-                    Compilateur.analyseurLexical.GENCODE_stop();
                     Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
                     return true;
                 }
@@ -281,9 +281,9 @@ public class AnalyseurSyntaxique {
         }
 
     }
-
+    //ancienne version
     // instruction -> affectation | lecture | ecriture | bloc
-    public boolean instruction() throws IOException {
+    /*public boolean instruction() throws IOException {
 
         if(affectation() || lecture() || ecriture() || bloc()){
             return true;
@@ -291,7 +291,118 @@ public class AnalyseurSyntaxique {
         else{
             return false;
         }
+    }*/
+
+    // instruction -> inst_non_cond | inst_cond
+    public boolean instruction() throws IOException {
+        if(inst_non_cond() || inst_cond()){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
+
+    // inst_non_cond -> affectation | lecture | ecriture | bloc | inst_repe
+    public boolean inst_non_cond() throws IOException {
+        if(affectation() || lecture() || ecriture() || bloc() || inst_repe()){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    // inst_repe -> 'tantque' exp 'faire' instruction
+    public boolean inst_repe() throws IOException {
+        if(Compilateur.UNILEX == Compilateur.T_UNILEX.motcle && Compilateur.chaine.equals("TANTQUE")){
+            Compilateur.analyseurLexical.GENCODE_4();
+
+            Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+            if(exp()){
+                Compilateur.analyseurLexical.GENCODE_alsn();
+
+                if(Compilateur.UNILEX == Compilateur.T_UNILEX.motcle && Compilateur.chaine.equals("FAIRE")){
+                    Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+                    if(instruction()){
+                        Compilateur.analyseurLexical.GENCODE_alle2();
+                        return true;
+                    }
+                    else{
+                        messageErreur = "instruction attendue";
+                        return false;
+                    }
+                }
+                else{
+                    messageErreur = "mot clé FAIRE attendu";
+                    return false;
+                }
+            }
+            else{
+                messageErreur = "expression attendue";
+                return false;
+            }
+        }
+        else{
+            messageErreur = "mot clé TANTQUE attendu";
+            return false;
+        }
+
+    }
+
+
+    // inst_cond -> 'si' exp 'alors' ( inst_cond | inst_non_cond { 'sinon' instruction })
+    public boolean inst_cond() throws IOException {
+        if(Compilateur.UNILEX == Compilateur.T_UNILEX.motcle && Compilateur.chaine.equals("SI")) {
+            Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+            if(exp()){
+
+                Compilateur.analyseurLexical.GENCODE_alsn();
+
+                if(Compilateur.UNILEX == Compilateur.T_UNILEX.motcle && Compilateur.chaine.equals("ALORS")){
+                    Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+                    if(inst_cond()){
+                        Compilateur.analyseurLexical.GENCODE_alle1();
+                        Compilateur.analyseurLexical.GENCODE_3();
+                        return true;
+                    }
+                    else if(inst_non_cond()){
+                        Compilateur.analyseurLexical.GENCODE_alle1();
+                        if(Compilateur.UNILEX == Compilateur.T_UNILEX.motcle && Compilateur.chaine.equals("SINON")){
+                            Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
+                            if(instruction()){
+                                Compilateur.analyseurLexical.GENCODE_3();
+                                return true;
+                            }
+                            else{
+                                messageErreur = "instruction attendue";
+                                return false;
+                            }
+                        }
+                        Compilateur.analyseurLexical.GENCODE_3();
+                        return true;
+                    }
+                    else{
+                        return false;
+                    }
+                }
+                else{
+                    messageErreur = "mot clé ALORS attendu";
+                    return false;
+                }
+
+            }
+            else{
+                messageErreur = "expression attendue";
+                return false;
+            }
+        }
+        else{
+            messageErreur = "mot clé SI attendu";
+            return false;
+        }
+    }
+
 
     private boolean isDeclaredVariable(){
         int indice = Compilateur.tableIdentificateur.chercher(Compilateur.chaine);
@@ -599,7 +710,7 @@ public class AnalyseurSyntaxique {
             return true;
         }
         else if(Compilateur.UNILEX == Compilateur.T_UNILEX.moins){
-            Compilateur.analyseurLexical.GENCODE_opbin(Memoire.MOT_MEMOIRE.MOIN);
+            Compilateur.analyseurLexical.GENCODE_opbin(Memoire.MOT_MEMOIRE.SOUS);
             Compilateur.UNILEX = Compilateur.analyseurLexical.analex();
             return true;
         }

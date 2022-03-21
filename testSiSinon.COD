@@ -1,0 +1,19 @@
+1 mot(s) réservé(s) pour les variables globales
+EMPI 0
+EMPI 0
+AFFE
+EMPI 0
+CONT
+ALSN 69
+ECRC 'le resultat est different de zero' FINC
+ECRL
+ECRC 'il est egal a:' FINC
+EMPI 0
+CONT
+ECRE
+ALLE 90
+ECRC 'le resultat est nul' FINC
+EMPI 0
+EMPI 5
+AFFE
+STOP

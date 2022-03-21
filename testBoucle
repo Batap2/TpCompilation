@@ -1,0 +1,12 @@
+programme exemple;
+var i;
+debut
+    i := 9;
+    Tantque i faire
+        debut
+            ecrire(i, ' ');
+            i := i-1
+        fin;
+    ecrire('0');
+    ecrire()
+fin.

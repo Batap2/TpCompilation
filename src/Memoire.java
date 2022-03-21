@@ -13,7 +13,14 @@ public class Memoire {
     private int som_pilop = -1;
     private int som_pilex = indiceDebutPILEX-1;
 
-    public enum MOT_MEMOIRE{ADDI, SOUS, MULT, DIVI, MOIN, AFFE, LIRE, ECRL, ECRE, ECRC, FINC, EMPI, CONT, STOP};
+    public enum MOT_MEMOIRE{ADDI, SOUS, MULT, DIVI, MOIN, AFFE, LIRE, ECRL, ECRE, ECRC, FINC, EMPI, CONT, STOP, ALLE, ALSN};
+
+    /*public Memoire(){
+        for(int i=indiceDebutP_CODE; i<taille; i++){
+            memoireCentrale[i] = -1;
+        }
+    }*/
+
 
     public void setMemvar(int indice, int value){
         memoireCentrale[indice] = value;
@@ -78,6 +85,12 @@ public class Memoire {
     public void print(){
         for(int i=0; i<taille;i++){
             System.out.println(i+": "+memoireCentrale[i]);
+        }
+    }
+
+    public void printPilop(){
+        for(int i=0; i<taille/4; i++){
+            System.out.println(i+": "+PILOP[i]);
         }
     }
 

@@ -1,0 +1,18 @@
+1 mot(s) réservé(s) pour les variables globales
+ECRC 'Entrez un nombre entier.' FINC
+EMPI 0
+LIRE
+EMPI 0
+CONT
+ALSN 42
+EMPI 0
+EMPI 1
+AFFE
+ALLE 47
+EMPI 0
+EMPI 2
+AFFE
+EMPI 0
+CONT
+ECRE
+STOP

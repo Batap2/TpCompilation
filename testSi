@@ -1,0 +1,5 @@
+programme exemple;
+debut
+    Si 1 alors
+        ecrire()
+fin.

@@ -1,0 +1,11 @@
+programme exemple;
+var i;
+debut
+    ecrire('Entrez un nombre entier.');
+    lire(i);
+    Si i alors
+        i := 1
+    sinon
+        i := 2;
+    ecrire(i)
+fin.
